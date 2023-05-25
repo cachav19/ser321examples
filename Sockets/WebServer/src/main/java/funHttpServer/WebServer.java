@@ -256,17 +256,20 @@ class WebServer {
               System.out.println(repoObject.getJSONObject(i).getInt("id"));
               idArray.put(repoObject.getJSONObject(i).getInt("id"));
 
-              //System.out.println(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
-              //loginArray.put(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
+              System.out.println(repoObject.getJSONObject(i).getJSONObject("owner").getString("login"));
+              loginArray.put(repoObject.getJSONObject(i).getJSONObject("owner").getString("login"));
             }
 
             builder.append("HTTP/1.1 200 OK\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             for (int i = 0; i < repoObject.length(); i++) {
-              builder.append(nameArray.getString(i) + "\n");
-              builder.append(idArray.getInt(i) + "\n");
-              //builder.append(loginArray.getString(i) + "\n");
+              builder.append(nameArray.getString(i));
+              builder.append("\n");
+              builder.append(idArray.getInt(i));
+              builder.append("\n");
+              builder.append(loginArray.getString(i));
+              builder.append("\n");
             }
 
           } catch (Exception ex) {
