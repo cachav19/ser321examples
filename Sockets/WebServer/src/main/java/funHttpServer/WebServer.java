@@ -340,6 +340,9 @@ class WebServer {
             String loss = "You Lost!";
             String tie = "You Tied!";
             Integer opChoice;
+            Integer wins = 0;
+            Integer losses = 0;
+            Integer draws = 0;
 
             switch (choice) {
               case 0:
@@ -370,7 +373,7 @@ class WebServer {
 
             builder.append("Beginning Simulation, Your Choice: " + choiceRep);
             builder.append("\n");
-            
+
             //run "matches
             for (int i = 0; i < matches; i++) {
 
@@ -394,20 +397,27 @@ class WebServer {
               if (choice == 0 && opChoice == 2){
                 builder.append(victory);
                 builder.append("\n");
+                wins++;
               } else if (choice == 1 && opChoice == 0) {
                 builder.append(victory);
                 builder.append("\n");
+                wins++;
               } else if (choice == 2 && opChoice == 1) {
                 builder.append(victory);
                 builder.append("\n");
+                wins++;
               } else if (choice.equals(opChoice)) {
                 builder.append(tie);
                 builder.append("\n");
+                draws++;
               } else {
                 builder.append(loss);
                 builder.append("\n");
+                losses++;
               }
             }
+            builder.append("Your Total Score! " + "Wins: " + wins + " Draws: " + draws + " Losses: " + losses);
+            builder.append("\n");
 
           } catch (Exception ex) {
 
