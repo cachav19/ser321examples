@@ -103,12 +103,15 @@ hs_err_pid*
 ### Gradle ###
 .gradle
 build/
+gradle-wrapper.properties
+gradlew
+gradlew.bat
 
 # Ignore Gradle GUI config
 gradle-app.setting
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
+# gradle-wrapper.jar
 
 # Avoid ignoring MusicGui jar file (.jar files are usually ignored)
 !MusicGui.jar
