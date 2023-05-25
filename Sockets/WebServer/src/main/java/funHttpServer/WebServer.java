@@ -256,8 +256,8 @@ class WebServer {
               System.out.println(repoObject.getJSONObject(i).getInt("id"));
               idArray.put(repoObject.getJSONObject(i).getInt("id"));
 
-              System.out.println(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
-              loginArray.put(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
+              //System.out.println(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
+              //loginArray.put(repoObject.getJSONObject(i).getJSONArray("owner").getString(0));
             }
 
             builder.append("HTTP/1.1 200 OK\n");
@@ -266,7 +266,7 @@ class WebServer {
             for (int i = 0; i < repoObject.length(); i++) {
               builder.append(nameArray.getString(i) + "\n");
               builder.append(idArray.getInt(i) + "\n");
-              builder.append(loginArray.getString(i) + "\n");
+              //builder.append(loginArray.getString(i) + "\n");
             }
 
           } catch (Exception ex) {
