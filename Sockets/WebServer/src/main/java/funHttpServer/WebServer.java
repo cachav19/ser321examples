@@ -16,6 +16,8 @@ write a response back
 
 package funHttpServer;
 
+import org.json.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -198,24 +200,32 @@ class WebServer {
           // wrong data is given this just crashes
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-          // extract path parameters
-          query_pairs = splitQuery(request.replace("multiply?", ""));
 
-          // extract required fields from parameters
-          Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-          Integer num2 = Integer.parseInt(query_pairs.get("num2"));
-
-          // do math
-          Integer result = num1 * num2;
-
-          // Generate response
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Result is: " + result);
 
           // TODO: Include error handling here with a correct error code and
-          // a response that makes sense
+          try {
+            // extract path parameters
+            query_pairs = splitQuery(request.replace("multiply?", ""));
+            // extract required fields from parameters
+            Integer num1 = Integer.parseInt(query_pairs.get("num1"));
+            Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
+
+          } catch (Exception ex) {
+
+            // Generate response
+            builder.append("HTTP/1.1 400 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Your input was incorrect. Requires exactly two integers.");
+          }
 
         } else if (request.contains("github?")) {
           // pulls the query from the request and runs it with GitHub's REST API
@@ -228,15 +238,46 @@ class WebServer {
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           query_pairs = splitQuery(request.replace("github?", ""));
-          String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-          System.out.println(json);
 
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Check the todos mentioned in the Java source file");
-          // TODO: Parse the JSON returned by your fetch and create an appropriate
-          // response based on what the assignment document asks for
+          //System.out.println(json);
+
+          try {
+            String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+
+            JSONArray repoObject = new JSONArray(json);
+            JSONArray nameArray = new JSONArray();
+            JSONArray idArray = new JSONArray();
+            JSONArray loginArray = new JSONArray();
+
+            for (int i = 0; i < repoObject.length(); i++) {
+              System.out.println(repoObject.getJSONObject(i).getString("full_name"));
+              nameArray.put(repoObject.getJSONObject(i).getString("full_name"));
+
+              System.out.println(repoObject.getJSONObject(i).getInt("id"));
+              idArray.put(repoObject.getJSONObject(i).getInt("id"));
+
+              System.out.println(repoObject.getJSONObject(i).getJSONObject("owner").getString("login"));
+              loginArray.put(repoObject.getJSONObject(i).getJSONObject("owner").getString("login"));
+            }
+
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            for (int i = 0; i < repoObject.length(); i++) {
+              builder.append(nameArray.getString(i));
+              builder.append("\n");
+              builder.append(idArray.getInt(i));
+              builder.append("\n");
+              builder.append(loginArray.getString(i));
+              builder.append("\n");
+            }
+
+          } catch (Exception ex) {
+            builder.append("HTTP/1.1 400 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Something went wrong.");
+          }
 
         } else {
           // if the request is not recognized at all
