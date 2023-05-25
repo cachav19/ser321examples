@@ -429,8 +429,6 @@ class WebServer {
             builder.append("Your input was incorrect. Requires exactly two integers. See request formatting. Requires non-negative integers.");
           }
 
-
-
         } else {
           // if the request is not recognized at all
 
