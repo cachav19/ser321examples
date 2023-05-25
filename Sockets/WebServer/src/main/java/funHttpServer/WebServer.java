@@ -338,6 +338,7 @@ class WebServer {
             String opRep;
             String victory = "You Won!";
             String loss = "You Lost!";
+            String tie = "You Tied!";
             Integer opChoice;
 
             switch (choice) {
@@ -384,7 +385,7 @@ class WebServer {
                 default:
                   opRep = "ErrrO-rr";
               }
-              builder.append("Match " + (i+1) + ": " + "Your Choice: " + choiceRep + "Opponent: " + opRep + " ");
+              builder.append("Match " + (i+1) + ": " + "Your Choice: " + choiceRep + " " + "Opponent: " + opRep + " ");
               builder.append("\n");
 
               if (choice == 0 && opChoice == 1){
@@ -395,6 +396,9 @@ class WebServer {
                 builder.append("\n");
               } else if (choice == 2 && opChoice == 1) {
                 builder.append(victory);
+                builder.append("\n");
+              } else if (choice.equals(opChoice)) {
+                builder.append(tie);
                 builder.append("\n");
               } else {
                 builder.append(loss);
