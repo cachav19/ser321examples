@@ -16,6 +16,8 @@ write a response back
 
 package funHttpServer;
 
+import org.json.*;
+
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -237,8 +239,15 @@ class WebServer {
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           query_pairs = splitQuery(request.replace("github?", ""));
           String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-          System.out.println(json);
+          //System.out.println(json);
 
+          try {
+            builder.append("compiling json");
+            JSONObject repoObject = new JSONObject(json);
+            JSONArray nameArray = repoObject.getJSONArray("name");
+          } catch (Exception ex) {
+            builder.append("Something went wrong.");
+          }
           builder.append("HTTP/1.1 200 OK\n");
           builder.append("Content-Type: text/html; charset=utf-8\n");
           builder.append("\n");
