@@ -267,7 +267,7 @@ class WebServer {
           } catch (Exception ex) {
             builder.append("Something went wrong.");
           }
-          
+
         } else {
           // if the request is not recognized at all
 
