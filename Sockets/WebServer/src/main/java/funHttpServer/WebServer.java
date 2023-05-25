@@ -306,7 +306,8 @@ class WebServer {
             builder.append("\n");
             for (int i = 0; i < amount; i++) {
               //display the results of the dice rolls.
-              builder.append("Dice " + i+1 + ": " + diceArray.get(i));
+              builder.append("Dice " + (i+1) + ": " + diceArray.get(i));
+              builder.append("\n");
             }
 
           } catch (Exception ex) {
