@@ -369,6 +369,8 @@ class WebServer {
             builder.append("\n");
 
             builder.append("Beginning Simulation, Your Choice: " + choiceRep);
+            builder.append("\n");
+            
             //run "matches
             for (int i = 0; i < matches; i++) {
 
