@@ -355,6 +355,7 @@ class WebServer {
                 choiceRep = "Scissors";
                 break;
               default:
+                choice = 0;
                 choiceRep = "Default Rock";
             }
 
