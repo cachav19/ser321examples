@@ -9,6 +9,7 @@ You can also do some other simple GET requests:
 5) /github?query=users/amehlhase316/repos (or other GitHub repo owners) will lead to receiving
    JSON which will for now only be printed in the console. See the todo below
 6) /dice?amount=2&size=20 will simulate rolling an amount of dice of the given size.
+7  /rps?choice=0&matches=3 will simulate a series of rps matches. 0=rock,1=paper,2=scissors.
 
 
 The reading of the request is done "manually", meaning no library that helps making things a 
@@ -317,6 +318,97 @@ class WebServer {
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
             builder.append("Your input was incorrect. Requires exactly two integers. See request formatting.");
+          }
+
+
+
+        } else if (request.contains("rps?")) {
+
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+
+          try {
+            Random rngMachine = new Random();
+            // extract path parameters
+            query_pairs = splitQuery(request.replace("rps?", ""));
+            // extract required fields from parameters
+            Integer choice = Integer.parseInt(query_pairs.get("choice"));
+            Integer matches = Integer.parseInt(query_pairs.get("matches"));
+
+            String choiceRep;
+            String opRep;
+            String victory = "You Won!";
+            String loss = "You Lost!";
+            Integer opChoice;
+
+            switch (choice) {
+              case 0:
+                choiceRep = "Rock";
+                break;
+              case 1:
+                choiceRep = "Paper";
+                break;
+              case 2:
+                choiceRep = "Scissors";
+                break;
+              default:
+                choiceRep = "Default Rock";
+            }
+
+            // create "opponents"
+            ArrayList<Integer> opponentArray = new ArrayList<>();
+
+            for (int i = 0; i < matches; i++) {
+              //generate and add a "dice" between 1 and size to the list.
+              opponentArray.add(rngMachine.nextInt(3));
+            }
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+
+            //run "matches
+            for (int i = 0; i < matches; i++) {
+
+              opChoice = opponentArray.get(i);
+              switch (opChoice) {
+                case 0:
+                  opRep = "Rock";
+                  break;
+                case 1:
+                  opRep = "Paper";
+                  break;
+                case 2:
+                  opRep = "Scissors";
+                  break;
+                default:
+                  opRep = "ErrrO-rr";
+              }
+              builder.append("Match " + (i+1) + ": " + "Your Choice: " + choiceRep + "Opponent: " + opRep + " ");
+              builder.append("\n");
+
+              if (choice == 0 && opChoice == 1){
+                builder.append(victory);
+                builder.append("\n");
+              } else if (choice == 1 && opChoice == 0) {
+                builder.append(victory);
+                builder.append("\n");
+              } else if (choice == 2 && opChoice == 1) {
+                builder.append(victory);
+                builder.append("\n");
+              } else {
+                builder.append(loss);
+                builder.append("\n");
+              }
+            }
+
+          } catch (Exception ex) {
+
+            // Generate response
+            builder.append("HTTP/1.1 400 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Your input was incorrect. Requires exactly two integers. See request formatting. Requires non-negative integers.");
           }
 
 
