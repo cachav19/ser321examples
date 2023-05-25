@@ -1,5 +1,5 @@
 /*
-Simple Web Server in Java which allows you to call 
+Simple Web Server in Java which allows you to call
 localhost:9000/ and show you the root.html webpage from the www/root.html folder
 You can also do some other simple GET requests:
 1) /random shows you a random picture (well random from the set defined)
@@ -8,9 +8,12 @@ You can also do some other simple GET requests:
 4) /multiply?num1=3&num2=4 multiplies the two inputs and responses with the result
 5) /github?query=users/amehlhase316/repos (or other GitHub repo owners) will lead to receiving
    JSON which will for now only be printed in the console. See the todo below
+6) /dice?amount=2&size=20 will simulate rolling an amount of dice of the given size.
+7  /rps?choice=0&matches=3 will simulate a series of rps matches. 0=rock,1=paper,2=scissors.
 
-The reading of the request is done "manually", meaning no library that helps making things a 
-little easier is used. This is done so you see exactly how to pars the request and 
+
+The reading of the request is done "manually", meaning no library that helps making things a
+little easier is used. This is done so you see exactly how to pars the request and
 write a response back
 */
 
@@ -19,6 +22,7 @@ package funHttpServer;
 import org.json.*;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -201,8 +205,6 @@ class WebServer {
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
 
-
-          // TODO: Include error handling here with a correct error code and
           try {
             // extract path parameters
             query_pairs = splitQuery(request.replace("multiply?", ""));
@@ -278,6 +280,155 @@ class WebServer {
             builder.append("\n");
             builder.append("Something went wrong.");
           }
+
+        } else if (request.contains("dice?")) {
+
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+
+          try {
+            Random rngMachine = new Random();
+            // extract path parameters
+            query_pairs = splitQuery(request.replace("dice?", ""));
+            // extract required fields from parameters
+            Integer amount = Integer.parseInt(query_pairs.get("amount"));
+            Integer size = Integer.parseInt(query_pairs.get("size"));
+
+            // roll dice
+            ArrayList<Integer> diceArray = new ArrayList<>();
+
+            for (int i = 0; i < amount; i++) {
+              //generate and add a "dice" between 1 and size to the list.
+              diceArray.add(1 + rngMachine.nextInt(size));
+            }
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            for (int i = 0; i < amount; i++) {
+              //display the results of the dice rolls.
+              builder.append("Dice " + (i+1) + ": " + diceArray.get(i));
+              builder.append("\n");
+            }
+
+          } catch (Exception ex) {
+
+            // Generate response
+            builder.append("HTTP/1.1 400 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Your input was incorrect. Requires exactly two integers. See request formatting.");
+          }
+
+
+
+        } else if (request.contains("rps?")) {
+
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+
+          try {
+            Random rngMachine = new Random();
+            // extract path parameters
+            query_pairs = splitQuery(request.replace("rps?", ""));
+            // extract required fields from parameters
+            Integer choice = Integer.parseInt(query_pairs.get("choice"));
+            Integer matches = Integer.parseInt(query_pairs.get("matches"));
+
+            String choiceRep;
+            String opRep;
+            String victory = "You Won!";
+            String loss = "You Lost!";
+            String tie = "You Tied!";
+            Integer opChoice;
+            Integer wins = 0;
+            Integer losses = 0;
+            Integer draws = 0;
+
+            switch (choice) {
+              case 0:
+                choiceRep = "Rock";
+                break;
+              case 1:
+                choiceRep = "Paper";
+                break;
+              case 2:
+                choiceRep = "Scissors";
+                break;
+              default:
+                choiceRep = "Default Rock";
+            }
+
+            // create "opponents"
+            ArrayList<Integer> opponentArray = new ArrayList<>();
+
+            for (int i = 0; i < matches; i++) {
+              //generate and add a "dice" between 1 and size to the list.
+              opponentArray.add(rngMachine.nextInt(3));
+            }
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+
+            builder.append("Beginning Simulation, Your Choice: " + choiceRep);
+            builder.append("\n");
+
+            //run "matches
+            for (int i = 0; i < matches; i++) {
+
+              opChoice = opponentArray.get(i);
+              switch (opChoice) {
+                case 0:
+                  opRep = "Rock";
+                  break;
+                case 1:
+                  opRep = "Paper";
+                  break;
+                case 2:
+                  opRep = "Scissors";
+                  break;
+                default:
+                  opRep = "ErrrO-rr";
+              }
+              builder.append("Match " + (i+1) + ": " + "Opponent: " + opRep + " ");
+              builder.append("\n");
+
+              if (choice == 0 && opChoice == 2){
+                builder.append(victory);
+                builder.append("\n");
+                wins++;
+              } else if (choice == 1 && opChoice == 0) {
+                builder.append(victory);
+                builder.append("\n");
+                wins++;
+              } else if (choice == 2 && opChoice == 1) {
+                builder.append(victory);
+                builder.append("\n");
+                wins++;
+              } else if (choice.equals(opChoice)) {
+                builder.append(tie);
+                builder.append("\n");
+                draws++;
+              } else {
+                builder.append(loss);
+                builder.append("\n");
+                losses++;
+              }
+            }
+            builder.append("Your Total Score! " + "Wins: " + wins + " Draws: " + draws + " Losses: " + losses);
+            builder.append("\n");
+
+          } catch (Exception ex) {
+
+            // Generate response
+            builder.append("HTTP/1.1 400 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Your input was incorrect. Requires exactly two integers. See request formatting. Requires non-negative integers.");
+          }
+
+
 
         } else {
           // if the request is not recognized at all
@@ -371,7 +522,7 @@ class WebServer {
    * a method to make a web request. Note that this method will block execution
    * for up to 20 seconds while the request is being satisfied. Better to use a
    * non-blocking request.
-   * 
+   *
    * @param aUrl the String indicating the query url for the OMDb api search
    * @return the String result of the http request.
    *
