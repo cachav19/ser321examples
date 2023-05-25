@@ -244,7 +244,7 @@ class WebServer {
           try {
             String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
 
-            JSONObject repoObject = new JSONArray(json);
+            JSONArray repoObject = new JSONArray(json);
             JSONArray nameArray = new JSONArray();
             JSONArray idArray = new JSONArray();
             JSONArray loginArray = new JSONArray();
