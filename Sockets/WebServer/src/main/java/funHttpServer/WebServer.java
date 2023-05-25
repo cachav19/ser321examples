@@ -368,6 +368,7 @@ class WebServer {
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
 
+            builder.append("Beginning Simulation, Your Choice: " + choiceRep);
             //run "matches
             for (int i = 0; i < matches; i++) {
 
@@ -385,10 +386,10 @@ class WebServer {
                 default:
                   opRep = "ErrrO-rr";
               }
-              builder.append("Match " + (i+1) + ": " + "Your Choice: " + choiceRep + " " + "Opponent: " + opRep + " ");
+              builder.append("Match " + (i+1) + ": " + "Opponent: " + opRep + " ");
               builder.append("\n");
 
-              if (choice == 0 && opChoice == 1){
+              if (choice == 0 && opChoice == 2){
                 builder.append(victory);
                 builder.append("\n");
               } else if (choice == 1 && opChoice == 0) {
