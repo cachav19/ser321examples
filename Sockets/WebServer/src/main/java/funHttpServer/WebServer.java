@@ -238,23 +238,36 @@ class WebServer {
 
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           query_pairs = splitQuery(request.replace("github?", ""));
-          String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+
           //System.out.println(json);
 
           try {
-            builder.append("compiling json");
-            JSONObject repoObject = new JSONObject(json);
-            JSONArray nameArray = repoObject.getJSONArray("name");
+            String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
+
+            JSONObject repoObject = new JSONArray(json);
+            JSONArray nameArray = new JSONArray();
+            JSONArray idArray = new JSONArray();
+            JSONArray loginArray = new JSONArray();
+
+            for (int i = 0; i < repoObject.length(); i++) {
+              nameArray.put(repoObject.get(i).get("full_name"));
+              idArray.put(repoObject.get(i).get("id"));
+              loginArray.put(repoObject.get(i).getJSONArray(5).get("login"));
+            }
+
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            for (int i = 0; i < repoObject.length(); i++) {
+              builder.append(nameArray.getString(i) + "\n");
+              builder.append(idArray.getInt(i) + "\n");
+              builder.append(loginArray.getString(i) + "\n");
+            }
+
           } catch (Exception ex) {
             builder.append("Something went wrong.");
           }
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Check the todos mentioned in the Java source file");
-          // TODO: Parse the JSON returned by your fetch and create an appropriate
-          // response based on what the assignment document asks for
-
+          
         } else {
           // if the request is not recognized at all
 
